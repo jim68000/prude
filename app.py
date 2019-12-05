@@ -30,6 +30,7 @@ def get_tables(schema):
     tables = cur.fetchall()
     return str(tables)
 
+
 @app.route('/api/v1/columns/<schema>/<table>')
 def get_columns(schema, table):
     cur.execute("select column_name, data_type  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
