@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import psycopg2
 import json
 
@@ -27,7 +27,7 @@ def get_schemas():
 
 @app.route('/api/v1/tables/<schema>')
 def get_tables(schema):
-    cur.execute("select table_name from information_schema.tables where table_schema = '" + schema + "'")
+    cur.execute("select * from information_schema.tables where table_schema = '" + schema + "'")
     tables = [t[0] for t in cur.fetchall()]
     return json.dumps(tables)
 
@@ -38,6 +38,18 @@ def get_columns(schema, table):
     tables = cur.fetchall()
     return str(tables)
 
+
+@app.route('/trivial')
+def test_gov():
+    return render_template('data_workspace.html')
+
+
+@app.route('/process', methods=['POST'])
+def process():
+    cur.execute(request.form['sql'])
+    rows = cur.fetchall()
+    columns = [a.name for a in cur.description]
+    return render_template('data_workspace.html', columns=columns, rows=rows, length=len(rows), sql=request.form['sql'])
 
 if __name__ == '__main__':
     app.run()
