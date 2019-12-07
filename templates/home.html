@@ -9,7 +9,19 @@
 <body>
 <ul>
 {% for schema in schemas %}
-    <li><span class="schema" onclick="axios.get('/api/v1/tables/{{ schema }}').then((r) => dump(r))">{{ schema }}<span>
+    <li><a href="/tables/{{ schema }}">{{ schema }}</a><span>
+    {% if tables %}
+        <ul>
+            {% for table in tables %}
+                <li><a href="/columns/{{ table }}/{{ schema }}">{{ table }}</a>
+                {%  if columns %}
+                    <ul>
+                    {% for col in columns %}
+                        <li>{{ col[0] }} {{ col[1] }}
+                        {%  endfor %}
+                {% endif %}
+            {% endfor %}
+    {% endif %}
 {% endfor %}
 </ul>
 <div id="dumpbox"></div>
