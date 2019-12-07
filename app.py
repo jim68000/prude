@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import psycopg2
 import json
 
@@ -9,6 +9,7 @@ conn.set_client_encoding('UTF8')
 cur = conn.cursor()
 
 app = Flask(__name__)
+app.secret_key = '76tv6rcs3x32azx43scrfybyuniu'
 
 
 @app.route('/')
@@ -22,6 +23,7 @@ def get_schemas():
     cur.execute("select schema_name from information_schema.schemata;")
     schemas = [s[0] for s in cur.fetchall() if not s[0].startswith("pg_")]
     schemas.remove('information_schema')
+    session['schemas'] = schemas
     return schemas
 
 
@@ -29,7 +31,8 @@ def get_schemas():
 def get_tables(schema):
     cur.execute("select table_name from information_schema.tables where table_schema = '" + schema + "'")
     tables = [t[0] for t in cur.fetchall()]
-    return render_template("home.html", schemas=[schema], tables=tables)
+    print(session['schemas'])
+    return render_template("home.html", schemas=session['schemas'], tables=tables)
 
 
 @app.route('/columns/<table>/<schema>')
