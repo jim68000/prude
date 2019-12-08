@@ -9,11 +9,11 @@
 <body>
 <ul>
 {% for schema in schemas %}
-    <li><a href="/tables/{{ schema }}">{{ schema }}</a><span>
+    <li><a href="/explore/{{ schema }}/tables">{{ schema }}</a><span>
     {% if tables and schema == focussed_schema%}
         <ul>
             {% for table in tables %}
-                <li><a href="/columns/{{ table }}/{{ schema }}">{{ table }}</a>
+                <li><a href="/explore/{{ schema }}/{{ table }}/columns">{{ table }}</a>
                 {%  if columns %}
                     <ul>
                     {% for col in columns %}

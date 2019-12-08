@@ -27,7 +27,7 @@ def get_schemas():
     return schemas
 
 
-@app.route('/tables/<schema>')
+@app.route('/explore/<schema>/tables')
 def get_tables(schema):
     cur.execute("select table_name from information_schema.tables where table_schema = '" + schema + "'")
     tables = [t[0] for t in cur.fetchall()]
@@ -35,7 +35,7 @@ def get_tables(schema):
     return render_template("home.html", schemas=session['schemas'], tables=tables, focussed_schema=schema)
 
 
-@app.route('/columns/<table>/<schema>')
+@app.route('/explore/<schema>/<table>/columns')
 def get_columns(schema, table):
     cur.execute("select column_name, data_type  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
     tables = cur.fetchall()
