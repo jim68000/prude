@@ -14,11 +14,13 @@
         <ul>
             {% for table in tables %}
                 <li><a href="/explore/{{ schema }}/{{ table }}/columns">{{ table }}</a>
-                {%  if columns %}
+                {%  if columns and table == focussed_table %}
+                    {{ items }} items
                     <ul>
                     {% for col in columns %}
                         <li>{{ col[0] }} {{ col[1] }}
-                        {%  endfor %}
+                    {%  endfor %}
+                </ul>
                 {% endif %}
             {% endfor %}
         </ul>
