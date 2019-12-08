@@ -32,7 +32,7 @@ def get_tables(schema):
     cur.execute("select table_name from information_schema.tables where table_schema = '" + schema + "'")
     tables = [t[0] for t in cur.fetchall()]
     print(session['schemas'])
-    return render_template("home.html", schemas=session['schemas'], tables=tables)
+    return render_template("home.html", schemas=session['schemas'], tables=tables, focussed_schema=schema)
 
 
 @app.route('/columns/<table>/<schema>')

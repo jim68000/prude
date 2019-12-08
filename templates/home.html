@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Prude</title>
-    <script src="static/js/axios.js"></script>
-    <script src="static/js/app.js"></script>
+    <script src="/static/js/axios.js"></script>
+    <script src="/static/js/app.js"></script>
 </head>
 <body>
 <ul>
 {% for schema in schemas %}
     <li><a href="/tables/{{ schema }}">{{ schema }}</a><span>
-    {% if tables %}
+    {% if tables and schema == focussed_schema%}
         <ul>
             {% for table in tables %}
                 <li><a href="/columns/{{ table }}/{{ schema }}">{{ table }}</a>
@@ -21,6 +21,7 @@
                         {%  endfor %}
                 {% endif %}
             {% endfor %}
+        </ul>
     {% endif %}
 {% endfor %}
 </ul>
