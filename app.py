@@ -3,7 +3,7 @@ import psycopg2
 import json
 
 conn = psycopg2.connect('postgres://localhost')
-conn.set_session(readonly=True)
+conn.set_session(readonly=True, autocommit=True)
 conn.set_client_encoding('UTF8')
 
 cur = conn.cursor()
@@ -13,9 +13,8 @@ app.secret_key = '76tv6rcs3x32azx43scrfybyuniu'
 
 
 @app.route('/')
-def hello_world():
-    schemas = get_schemas()
-    return render_template("home.html", schemas=schemas)
+def start_page():
+    return render_template('sql_editor.html')
 
 
 @app.route('/schemas')
@@ -24,7 +23,7 @@ def get_schemas():
     schemas = [s[0] for s in cur.fetchall() if not s[0].startswith("pg_")]
     schemas.remove('information_schema')
     session['schemas'] = schemas
-    return schemas
+    return render_template("schema_explorer.html", schemas=schemas)
 
 
 @app.route('/explore/<schema>/tables')
@@ -32,7 +31,7 @@ def get_tables(schema):
     cur.execute("select table_name from information_schema.tables where table_schema = '" + schema + "'")
     tables = [t[0] for t in cur.fetchall()]
     session[schema] = tables
-    return render_template("home.html", schemas=session['schemas'], tables=tables, focussed_schema=schema)
+    return render_template("schema_explorer.html", schemas=session['schemas'], tables=tables, focussed_schema=schema)
 
 
 @app.route('/explore/<schema>/<table>/columns')
@@ -51,17 +50,16 @@ def get_columns(schema, table):
                            items=items)
 
 
-@app.route('/trivial')
-def test_gov():
-    return render_template('data_workspace.html')
-
-
 @app.route('/process', methods=['POST'])
 def process():
-    cur.execute(request.form['sql'])
-    rows = cur.fetchmany(1000)
-    columns = [a.name for a in cur.description]
-    return render_template('data_workspace.html', columns=columns, rows=rows, length=len(rows), sql=request.form['sql'])
+    try:
+        cur.execute(request.form['sql'])
+        rows = cur.fetchmany(1000)
+        columns = [a.name for a in cur.description]
+        return render_template('sql_editor.html', columns=columns, rows=rows, length=len(rows), sql=request.form['sql'])
+    except psycopg2.Error as e:
+        return render_template('sql_editor.html', error=e.pgerror, sql=request.form['sql'])
+
 
 if __name__ == '__main__':
     app.run()
