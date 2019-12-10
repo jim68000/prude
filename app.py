@@ -60,6 +60,17 @@ def process():
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=request.form['sql'])
 
+@app.route('/view100/<table>')
+def view_100(table):
+    try:
+        sql = 'select * from ' + table + ' limit 100;'
+        cur.execute(sql)
+        rows = cur.fetchall()
+        columns = [a.name for a in cur.description]
+        return render_template('sql_editor.html', columns=columns, rows=rows, length=len(rows), sql=sql)
+    except psycopg2.Error as e:
+        return render_template('sql_editor.html', error=e.pgerror, sql=sql)
+
 
 if __name__ == '__main__':
     app.run()
