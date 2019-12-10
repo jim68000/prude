@@ -73,7 +73,7 @@
                 <a class="govuk-breadcrumbs__link" href="/">Home</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/">
+                <a class="govuk-breadcrumbs__link" href="/catalogue/reference-data-sets">
                     SQL Editor
                 </a>
             </li>
@@ -85,23 +85,23 @@
     <main class="govuk-main-wrapper" id="main-content" role="main">
         <div class="govuk-grid-row" style="overflow-x: auto;">
             <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-m govuk-!-margin-top-8">Schemas</h2>
+                <h2 class="govuk-heading-m govuk-!-margin-top-8">Tables</h2>
                 <table class="govuk-table">
                     <thead>
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header">Schema name</th>
+                        <th class="govuk-table__header">Schema: {{ focussed_schema }}</th>
                         <th class="govuk-table__header">Action</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    {% for schema in schemas %}
+                    {% for table in tables %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
-                                {{ schema }}
+                                {{ table }}
                             </td>
-                            <td class="govuk-table__cell"><a class="govuk-link" href="/explore/{{ schema }}/tables">View
-                                tables</a></td>
+                            <td class="govuk-table__cell"><a class="govuk-link" href="/explore/{{ focussed_schema }}/{{ table }}/columns">View
+                                columns</a></td>
                         </tr>
 
                     {% endfor %}

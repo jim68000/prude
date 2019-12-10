@@ -31,7 +31,7 @@ def get_tables(schema):
     cur.execute("select table_name from information_schema.tables where table_schema = '" + schema + "'")
     tables = [t[0] for t in cur.fetchall()]
     session[schema] = tables
-    return render_template("schema_explorer.html", schemas=session['schemas'], tables=tables, focussed_schema=schema)
+    return render_template("table_explorer.html", tables=tables, focussed_schema=schema)
 
 
 @app.route('/explore/<schema>/<table>/columns')
@@ -41,7 +41,7 @@ def get_columns(schema, table):
     columns = [c for c in columns]
     cur.execute('select count(*) from "' + schema + '"."' + table + '";')
     items = cur.fetchone()[0]
-    return render_template("home.html",
+    return render_template("column_explorer.html",
                            schemas=session['schemas'],
                            tables=session[schema],
                            columns=columns,
