@@ -4,10 +4,30 @@
         <div class="govuk-grid-row" style="overflow-x: auto;">
             <div class="govuk-grid-column-full">
                 <h2 class="govuk-heading-m govuk-!-margin-top-8">Tables</h2>
+
+
+            <dl class="govuk-summary-list">
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Schema
+    </dt>
+    <dd class="govuk-summary-list__value">
+        {{ focussed_schema }}
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Table
+    </dt>
+    <dd class="govuk-summary-list__value">
+      {{ focussed_table }}
+    </dd>
+  </div>
+            </dl>
                 <table class="govuk-table">
                     <thead>
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header">Schema: {{ focussed_schema }}. Table: {{ focussed_table }}</th>
+                        <th class="govuk-table__header">Column</th>
                          <th class="govuk-table__header">Type</th>
                         <th class="govuk-table__header">Actions</th>
                     </tr>
@@ -22,7 +42,7 @@
                             <td class="govuk-table__cell">
                                 {{ column[1] }}
                             </td>
-                            <td class="govuk-table__cell"><a class="govuk-link" href="/explore/{{ focussed_schema }}/{{ table }}/columns">Start SQL here</a></td>
+                            <td class="govuk-table__cell"><a class="govuk-link" href="/start/{{ focussed_schema }}/{{ focussed_table }}/{{ column[0] }}">Start SQL here</a></td>
                         </tr>
 
                     {% endfor %}
@@ -30,7 +50,7 @@
                 </table>
                 <h3 class="govuk-heading-m">
 
-                <a href="/start/{{ focussed_table }}" class="govuk-link">Start SQL here</a> - <a href="/view100/{{ focussed_table }}" class="govuk-link">View first 100 rows</a>
+                <a href="/start/{{ focussed_schema }}/{{ focussed_table }}" class="govuk-link">Start SQL here</a> - <a href="/view100/{{ focussed_table }}" class="govuk-link">View first 100 rows</a>
                 </h3>
             </div>
         </div>

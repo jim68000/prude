@@ -60,6 +60,7 @@ def process():
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=request.form['sql'])
 
+
 @app.route('/view100/<table>')
 def view_100(table):
     try:
@@ -68,6 +69,22 @@ def view_100(table):
         rows = cur.fetchall()
         columns = [a.name for a in cur.description]
         return render_template('sql_editor.html', columns=columns, rows=rows, length=len(rows), sql=sql)
+    except psycopg2.Error as e:
+        return render_template('sql_editor.html', error=e.pgerror, sql=sql)
+
+
+@app.route('/start/<schema>/<table>')
+@app.route('/start/<schema>/<table>/<column>')
+def start_sql_table(schema, table, column=None):
+    try:
+        col = '*'
+        if column:
+            col = column
+        sql = f"select {col} from \"{schema}\".\"{table}\""
+        cur.execute(sql)
+        rows = cur.fetchmany(1000)
+        columns = [a.name for a in cur.description]
+        return render_template('sql_editor.html', columns=columns, rows=rows, sql=sql)
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=sql)
 
