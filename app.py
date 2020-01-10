@@ -92,6 +92,7 @@ def start_sql_table(schema, table, column=None):
 def auto_filter(schema, table):
     limit = 200
     dropdowns = {}
+    other_cols = {}
     try:
         cur.execute(
             "select column_name  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
@@ -107,10 +108,10 @@ def auto_filter(schema, table):
                 vals = cur.fetchall()
                 dropdowns[c[0]] = [v[0] for v in vals]
             else:
-                print("No", c[0], count)
+                other_cols[c[0]] = c[0]
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror)
-    return render_template('auto_filter.html', dropdowns=dropdowns)
+    return render_template('auto_filter.html', dropdowns=dropdowns, other_cols=other_cols)
 
 
 if __name__ == '__main__':
