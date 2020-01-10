@@ -1,0 +1,14 @@
+<html>
+<body>
+
+{% for d in dropdowns %}
+   {{ d }} <select name="{{ d }}">
+        {% for val in dropdowns[d] %}
+            <option>{{ val }}</option>
+        {% endfor %}
+    </select>
+{% endfor %}
+
+</body>
+
+</html>

@@ -88,6 +88,30 @@ def start_sql_table(schema, table, column=None):
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=sql)
 
+@app.route('/autofilter/<schema>/<table>')
+def auto_filter(schema, table):
+    limit = 200
+    dropdowns = {}
+    try:
+        cur.execute(
+            "select column_name  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
+        columns = cur.fetchall()
+        for c in columns:
+            cur.execute(f"select {c[0]} from {table} group by 1 limit {limit + 1}")
+            count = -1
+            res = cur.fetchall()
+            if res is not None:
+                count = len(res)
+            if count and 200 > count > -1:
+                cur.execute(f"select distinct {c[0]} from {table} order by 1 asc")
+                vals = cur.fetchall()
+                dropdowns[c[0]] = [v[0] for v in vals]
+            else:
+                print("No", c[0], count)
+    except psycopg2.Error as e:
+        return render_template('sql_editor.html', error=e.pgerror)
+    return render_template('auto_filter.html', dropdowns=dropdowns)
+
 
 if __name__ == '__main__':
     app.run()
