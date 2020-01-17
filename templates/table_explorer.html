@@ -18,7 +18,11 @@
                             <td class="govuk-table__cell">
                                 {{ table }}
                             </td>
-                            <td class="govuk-table__cell"><a class="govuk-link" href="/explore/{{ focussed_schema }}/{{ table }}/columns">View
+                            <td class="govuk-table__cell">
+
+                                <a class="govuk-link" href="/autofilter/{{ focussed_schema }}/{{ table }}">Filter table</a>
+                                    |
+                                <a class="govuk-link" href="/explore/{{ focussed_schema }}/{{ table }}/columns">View
                                 columns</a></td>
                         </tr>
 
