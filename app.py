@@ -106,7 +106,7 @@ def auto_filter(schema, table):
             res = cur.fetchall()
             if res is not None:
                 count = len(res)
-            if c != 'id' and count and 200 > count > -1:
+            if c != 'id' and count and limit > count > -1:
                 cur.execute(f"select distinct {c} from {table} order by 1 asc")
                 vals = cur.fetchall()
                 dropdowns[c] = ['------']
