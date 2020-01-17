@@ -90,14 +90,15 @@ def start_sql_table(schema, table, column=None):
         return render_template('sql_editor.html', error=e.pgerror, sql=sql)
 
 
-@app.route('/autofilter/<schema>/<table>')
+@app.route('/autofilter/<schema>/<table>', methods=['GET', 'POST'])
 def auto_filter(schema, table):
     limit = 200
     dropdowns = {}
     other_cols = {}
     try:
         cur.execute(
-            "select column_name  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
+            "select column_name  from information_schema.columns where table_schema = '"
+            + schema + "' and table_name = '" + table + "'")
         columns = [c[0] for c in cur.fetchall()]
         for c in columns:
             cur.execute(f"select {c} from {table} group by 1 limit {limit + 1}")
@@ -105,17 +106,31 @@ def auto_filter(schema, table):
             res = cur.fetchall()
             if res is not None:
                 count = len(res)
-            if count and 200 > count > -1:
+            if c != 'id' and count and 200 > count > -1:
                 cur.execute(f"select distinct {c} from {table} order by 1 asc")
                 vals = cur.fetchall()
-                dropdowns[c] = [v[0] for v in vals]
+                dropdowns[c] = ['------']
+                dropdowns[c] += ([v[0] for v in vals])
             else:
                 other_cols[c] = c
-        cur.execute(f"select * from {table}")
+        add_str = ''
+        extra_params = []
+        if len(request.form) > 0:
+            for tup in request.form:
+                if request.form[tup] != '------' and request.form[tup] != '':
+                    extra_params.append(f"{tup} = '{request.form[tup]}'")
+            add_str = ' WHERE ' + ' AND '.join(extra_params)
+        cur.execute(f"select * from {table} {add_str}")
         rows = cur.fetchmany(500)
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror)
-    return render_template('auto_filter.html', dropdowns=dropdowns, other_cols=other_cols, rows=rows, columns = columns)
+    return render_template('auto_filter.html',
+                           dropdowns=dropdowns,
+                           other_cols=other_cols,
+                           rows=rows,
+                           columns=columns,
+                           schema=schema,
+                           table=table)
 
 
 if __name__ == '__main__':

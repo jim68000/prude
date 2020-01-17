@@ -6,6 +6,7 @@
         <div class="govuk-grid-row" style="overflow-x: auto;">
             <div class="govuk-grid-column-one-third">
                 <h2 class="govuk-heading-m govuk-!-margin-top-8">Filters</h2>
+                <form action="/autofilter/{{ schema }}/{{ table }}" method="post">
 
                 {% for d in dropdowns %}
                     <div class="govuk-form-group">
@@ -28,6 +29,10 @@
                         <input class="govuk-input" id="{{ o }}" name="{{ o }}" type="text">
                     </div>
                 {% endfor %}
+                <button class="govuk-button" data-module="govuk-button">
+                    Filter
+                </button>
+                </form>
             </div>
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-m govuk-!-margin-top-8">Data</h2>
