@@ -1,17 +1,65 @@
-<html>
-<body>
 
-{% for d in dropdowns %}
-   {{ d }} <select name="{{ d }}">
-        {% for val in dropdowns[d] %}
-            <option>{{ val }}</option>
-        {% endfor %}
-    </select>
-{% endfor %}
 
-{% for o in other_cols %}
-    {{ o }}
-{% endfor %}
-</body>
+{% extends "layout.html" %}
+{% block content %}
+    <main class="govuk-main-wrapper" id="main-content" role="main">
+        <div class="govuk-grid-row" style="overflow-x: auto;">
+            <div class="govuk-grid-column-one-third">
+                <h2 class="govuk-heading-m govuk-!-margin-top-8">Filters</h2>
 
-</html>
+                {% for d in dropdowns %}
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="{{ d }}">
+                            {{ d }}
+                        </label>
+                        <select name="{{ d }}" class="govuk-select" id= {{ d }}>
+                            {% for val in dropdowns[d] %}
+                                <option>{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endfor %}
+
+                {% for o in other_cols %}
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="{{ o }}">
+                            {{ o }}
+                        </label>
+                        <input class="govuk-input" id="{{ o }}" name="{{ o }}" type="text">
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m govuk-!-margin-top-8">Data</h2>
+
+                <div class="scrollable-table">
+                    <table class="govuk-table govuk-!-font-size-16">
+                        <thead>
+                        <tr class="govuk-table__row">
+                            {% for column in columns %}
+                                <th class="govuk-table__header ref-data-col-character-field ref-data-col-id">
+                                    {{ column }}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in rows %}
+                            <tr class="govuk-table__row">
+                                {% for val in row %}
+
+                                    <td class="govuk-table__cell">
+                                        {{ val }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+{% endblock %}
+

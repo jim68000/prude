@@ -36,7 +36,8 @@ def get_tables(schema):
 
 @app.route('/explore/<schema>/<table>/columns')
 def get_columns(schema, table):
-    cur.execute("select column_name, data_type  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
+    cur.execute(
+        "select column_name, data_type  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
     columns = cur.fetchall()
     columns = [c for c in columns]
     cur.execute('select count(*) from "' + schema + '"."' + table + '";')
@@ -88,6 +89,7 @@ def start_sql_table(schema, table, column=None):
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=sql)
 
+
 @app.route('/autofilter/<schema>/<table>')
 def auto_filter(schema, table):
     limit = 200
@@ -96,22 +98,24 @@ def auto_filter(schema, table):
     try:
         cur.execute(
             "select column_name  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
-        columns = cur.fetchall()
+        columns = [c[0] for c in cur.fetchall()]
         for c in columns:
-            cur.execute(f"select {c[0]} from {table} group by 1 limit {limit + 1}")
+            cur.execute(f"select {c} from {table} group by 1 limit {limit + 1}")
             count = -1
             res = cur.fetchall()
             if res is not None:
                 count = len(res)
             if count and 200 > count > -1:
-                cur.execute(f"select distinct {c[0]} from {table} order by 1 asc")
+                cur.execute(f"select distinct {c} from {table} order by 1 asc")
                 vals = cur.fetchall()
-                dropdowns[c[0]] = [v[0] for v in vals]
+                dropdowns[c] = [v[0] for v in vals]
             else:
-                other_cols[c[0]] = c[0]
+                other_cols[c] = c
+        cur.execute(f"select * from {table}")
+        rows = cur.fetchmany(500)
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror)
-    return render_template('auto_filter.html', dropdowns=dropdowns, other_cols=other_cols)
+    return render_template('auto_filter.html', dropdowns=dropdowns, other_cols=other_cols, rows=rows, columns = columns)
 
 
 if __name__ == '__main__':
