@@ -7,7 +7,7 @@
 .scrollable-table {
   width: 100%;
   overflow-x: auto;
-  max-height: 560px;
+  max-height: 900px;
 }
 .scrollable-table table thead th {
   padding: 15px;
