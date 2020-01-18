@@ -7,3 +7,4 @@ Things to do
 - Text LIKE switch
 - Column type awareness
 - Simple charting
+- Tests (ahem)
