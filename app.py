@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, session
-import psycopg2
-import json
+import psycopg2 
 
 conn = psycopg2.connect('postgres://localhost')
 conn.set_session(readonly=True, autocommit=True)
