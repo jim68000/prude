@@ -108,8 +108,12 @@ def auto_filter(schema, table):
             if c != 'id' and count and limit > count > -1:
                 cur.execute(f"select distinct {c} from {table} order by 1 asc")
                 vals = cur.fetchall()
-                dropdowns[c] = ['------']
-                dropdowns[c] += ([v[0] for v in vals])
+                dropdowns[c] = [{'value': '------', 'selected': False}]
+                for v in vals:
+                    if request.form[c] != '' and request.form[c] == v[0]:
+                        dropdowns[c].append({'value': v[0], 'selected': True})
+                    else:
+                        dropdowns[c].append({'value': v[0], 'selected': False})
             else:
                 other_cols[c] = c
         add_str = ''

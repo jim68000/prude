@@ -14,8 +14,9 @@
                             {{ d }}
                         </label>
                         <select name="{{ d }}" class="govuk-select" id= {{ d }}>
-                            {% for val in dropdowns[d] %}
-                                <option>{{ val }}</option>
+                            {{ dropdowns | safe }}
+                            {% for element in dropdowns[d] %}
+                                <option{% if element.selected %} selected {% endif %}>{{ element.value }}</option>
                             {% endfor %}
                         </select>
                     </div>
