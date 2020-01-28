@@ -88,7 +88,7 @@ def start_sql_table(schema, table, column=None):
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=sql)
 
-
+# TODO refactor
 @app.route('/autofilter/<schema>/<table>', methods=['GET', 'POST'])
 def auto_filter(schema, table):
     limit = 200
