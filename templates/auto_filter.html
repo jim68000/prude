@@ -24,10 +24,10 @@
 
                 {% for o in other_cols %}
                     <div class="govuk-form-group">
-                        <label class="govuk-label" for="{{ o }}">
-                            {{ o }}
+                        <label class="govuk-label" for="{{ o.name }}">
+                            {{ o.name }}
                         </label>
-                        <input class="govuk-input" id="{{ o }}" name="{{ o }}" type="text">
+                        <input class="govuk-input" id="{{ o }}" name="{{ o.name }}" type="text" value="{{ o.value }}">
                     </div>
                 {% endfor %}
                 <button class="govuk-button" data-module="govuk-button">

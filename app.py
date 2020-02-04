@@ -34,7 +34,7 @@ def get_tables(schema):
 
 
 @app.route('/explore/<schema>/<table>/columns')
-def get_columns(schema, table):
+def show_columns(schema, table):
     cur.execute(
         "select column_name, data_type  from information_schema.columns where table_schema = '" + schema + "' and table_name = '" + table + "'")
     columns = cur.fetchall()
@@ -88,6 +88,12 @@ def start_sql_table(schema, table, column=None):
     except psycopg2.Error as e:
         return render_template('sql_editor.html', error=e.pgerror, sql=sql)
 
+def get_columns(cur, schema, table):
+    cur.execute(
+        "select column_name  from information_schema.columns where table_schema = '"
+        + schema + "' and table_name = '" + table + "'")
+    return [c[0] for c in cur.fetchall()]
+
 # TODO refactor
 @app.route('/autofilter/<schema>/<table>', methods=['GET', 'POST'])
 def auto_filter(schema, table):
@@ -95,10 +101,7 @@ def auto_filter(schema, table):
     dropdowns = {}
     other_cols = {}
     try:
-        cur.execute(
-            "select column_name  from information_schema.columns where table_schema = '"
-            + schema + "' and table_name = '" + table + "'")
-        columns = [c[0] for c in cur.fetchall()]
+        columns = get_columns(cur, schema, table)
         for c in columns:
             cur.execute(f"select {c} from {table} group by 1 limit {limit + 1}")
             count = -1
@@ -115,7 +118,9 @@ def auto_filter(schema, table):
                     else:
                         dropdowns[c].append({'value': v[0], 'selected': False})
             else:
-                other_cols[c] = c
+                other_cols[c] = [{'name':c, 'value':''}]
+                # if request.form[c] != '':
+                #     other_cols[c].append('name':c , 'value': request.form[c])
         add_str = ''
         extra_params = []
         if len(request.form) > 0:
