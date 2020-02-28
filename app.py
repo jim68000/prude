@@ -94,6 +94,7 @@ def get_columns(cur, schema, table):
         + schema + "' and table_name = '" + table + "'")
     return [c[0] for c in cur.fetchall()]
 
+
 # TODO refactor
 @app.route('/autofilter/<schema>/<table>', methods=['GET', 'POST'])
 def auto_filter(schema, table):
@@ -103,17 +104,18 @@ def auto_filter(schema, table):
     try:
         columns = get_columns(cur, schema, table)
         for c in columns:
-            cur.execute(f"select {c} from {table} group by 1 limit {limit + 1}")
+            cur.execute(f'select "{c}" from "{schema}"."{table}" group by 1 limit {limit + 1}')
             count = -1
             res = cur.fetchall()
             if res is not None:
                 count = len(res)
             if c != 'id' and count and limit > count > -1:
-                cur.execute(f"select distinct {c} from {table} order by 1 asc")
+                cur.execute(f'select distinct "{c}" from "{schema}"."{table}" order by 1 asc')
                 vals = cur.fetchall()
                 dropdowns[c] = [{'value': '------', 'selected': False}]
+                print(request.form[c])
                 for v in vals:
-                    if request.form[c] != '' and request.form[c] == v[0]:
+                    if request.form[c] != '' and request.form[c] == v:
                         dropdowns[c].append({'value': v[0], 'selected': True})
                     else:
                         dropdowns[c].append({'value': v[0], 'selected': False})
@@ -128,6 +130,7 @@ def auto_filter(schema, table):
                 if request.form[tup] != '------' and request.form[tup] != '':
                     extra_params.append(f"{tup} = '{request.form[tup]}'")
             add_str = ' WHERE ' + ' AND '.join(extra_params)
+
         cur.execute(f"select * from {table} {add_str}")
         rows = cur.fetchmany(500)
     except psycopg2.Error as e:
