@@ -113,9 +113,8 @@ def auto_filter(schema, table):
                 cur.execute(f'select distinct "{c}" from "{schema}"."{table}" order by 1 asc')
                 vals = cur.fetchall()
                 dropdowns[c] = [{'value': '------', 'selected': False}]
-                print(request.form[c])
                 for v in vals:
-                    if request.form[c] != '' and request.form[c] == v:
+                    if len(request.form) > 0 and request.form[c] != '' and request.form[c] == v:
                         dropdowns[c].append({'value': v[0], 'selected': True})
                     else:
                         dropdowns[c].append({'value': v[0], 'selected': False})
@@ -128,9 +127,8 @@ def auto_filter(schema, table):
         if len(request.form) > 0:
             for tup in request.form:
                 if request.form[tup] != '------' and request.form[tup] != '':
-                    extra_params.append(f"{tup} = '{request.form[tup]}'")
+                    extra_params.append(f"\"{tup}\" = '{request.form[tup]}'")
             add_str = ' WHERE ' + ' AND '.join(extra_params)
-
         cur.execute(f"select * from {table} {add_str}")
         rows = cur.fetchmany(500)
     except psycopg2.Error as e:
