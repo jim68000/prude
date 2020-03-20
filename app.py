@@ -120,8 +120,8 @@ def auto_filter(schema, table):
                         dropdowns[c].append({'value': v[0], 'selected': False})
             else:
                 other_cols[c] = [{'name':c, 'value':''}]
-                # if request.form[c] != '':
-                #     other_cols[c].append('name':c , 'value': request.form[c])
+                # if len(request.form) > 0 and request.form[c] != '':
+                #     other_cols[c].append({'name':c , 'value': request.form[c]})
         add_str = ''
         extra_params = []
         if len(request.form) > 0:
